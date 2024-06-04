@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class ServiceLocatorImpl implements IServiceLocator {
     private static ServiceLocatorImpl instance;
-    private final Map<String, ServiceDescriptor> services = new HashMap<>();
-    private final Map<String, Object> singletonInstances = new HashMap<>();
+    private final Map<String, ServiceDescriptor> servicesMap = new HashMap<>();
+    private final Map<String, Object> singletonInstancesMap = new HashMap<>();
 
     public static IServiceLocator getInstance() {
         if (instance == null) {
@@ -23,7 +23,7 @@ public class ServiceLocatorImpl implements IServiceLocator {
 
     public void registerService(Class<?> serviceClass, EServiceLifetime lifetime) {
         var serviceDescriptor = new ServiceDescriptor(serviceClass, lifetime);
-        services.put(serviceClass.getSimpleName(), serviceDescriptor);
+        servicesMap.put(serviceClass.getSimpleName(), serviceDescriptor);
     }
 
     public void registerService(Class<?> serviceInterface, Class<?> serviceClass, EServiceLifetime lifetime) {
@@ -36,78 +36,81 @@ public class ServiceLocatorImpl implements IServiceLocator {
         }
 
         var serviceDescriptor = new ServiceDescriptor(serviceClass, lifetime);
-        services.put(serviceInterface.getSimpleName(), serviceDescriptor);
+        servicesMap.put(serviceInterface.getSimpleName(), serviceDescriptor);
     }
 
     public Object getService(Class<?> serviceClass, Object... optionalParameters) {
-        return getService(serviceClass.getSimpleName(), optionalParameters);
-    }
-
-    private Object getService(String key, Object... optionalObjects) {
-        var serviceDescriptor = services.get(key);
-
-        if (serviceDescriptor == null) {
-            for (Object obj : optionalObjects) {
-                if (obj == null)
-                    return null;
-
-                if (obj.getClass().getSimpleName().equals(key)) {
-                    return obj;
-                }
-            }
-
-            throw new RuntimeException("No registered service for " + key);
-        }
-
         try {
-            Constructor<?>[] constructors = serviceDescriptor.getServiceClass().getConstructors();
-            for (Constructor<?> constructor : constructors) {
-
-                if (constructor.getParameterCount() == 0) {
-                    return getInstanceFromConstructorWithLifetime(constructor, serviceDescriptor.getServiceLifetime());
-                } else {
-
-                    Object[] parameters = new Object[constructor.getParameterCount()];
-                    Class<?>[] parameterTypes = constructor.getParameterTypes();
-
-                    for (int i = 0; i < parameterTypes.length; i++) {
-
-                        String parameterKey = parameterTypes[i].getSimpleName();
-                        Object dependency = getService(parameterKey, optionalObjects);
-
-
-                        parameters[i] = dependency;
-                    }
-
-                    return getInstanceFromConstructorWithLifetime(constructor, serviceDescriptor.getServiceLifetime(), parameters);
-                }
-            }
+            var scopedInstancesMap = new HashMap<String, Object>();
+            return getService(serviceClass.getSimpleName(), scopedInstancesMap, optionalParameters);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private Object getService(String key, HashMap<String, Object> scopedInstancesMap, Object... optionalObjects) {
+        var serviceDescriptor = servicesMap.get(key);
+        if (serviceDescriptor == null)
+            return tryGetServiceFromOptinalObjects(key, optionalObjects);
+
+        Constructor<?>[] constructors = serviceDescriptor.getServiceClass().getConstructors();
+        for (Constructor<?> constructor : constructors) {
+            var parameters = getDependenciesFromParameters(constructor, scopedInstancesMap, optionalObjects);
+            return getInstanceFromConstructorWithLifetime(constructor, serviceDescriptor.getServiceLifetime(), scopedInstancesMap, parameters);
         }
 
         return null;
     }
 
-    private Object getInstanceFromConstructorWithLifetime(Constructor<?> constructor, EServiceLifetime lifetime, Object... parameters) {
-        try {
-            Object serviceInstance = null;
+    private Object tryGetServiceFromOptinalObjects(String key, Object... optionalObjects) {
+        for (Object obj : optionalObjects) {
+            if (obj == null)
+                return null;
 
+            if (obj.getClass().getSimpleName().equals(key)) {
+                return obj;
+            }
+        }
+
+        throw new RuntimeException("No registered service for " + key);
+    }
+
+    private Object[] getDependenciesFromParameters(Constructor<?> constructor, HashMap<String, Object> scopedInstancesMap, Object... optionalObjects) {
+        var parameters = new Object[constructor.getParameterCount()];
+
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            var parameterKey = parameterTypes[i].getSimpleName();
+            var dependency = getService(parameterKey, scopedInstancesMap, optionalObjects);
+
+            parameters[i] = dependency;
+        }
+
+        return parameters;
+    }
+
+    private Object getInstanceFromConstructorWithLifetime(Constructor<?> constructor, EServiceLifetime lifetime, HashMap<String, Object> scopedInstancesMap, Object... parameters) {
+        try {
             switch (lifetime) {
                 case Transient:
                     return constructor.newInstance(parameters);
-                case Scoped: //Não implementado
-                    return constructor.newInstance(parameters);
+
+                case Scoped:
+                    String scopedKey = constructor.getDeclaringClass().getSimpleName();
+                    if (!scopedInstancesMap.containsKey(scopedKey))
+                        scopedInstancesMap.put(scopedKey, constructor.newInstance(parameters));
+
+                    return scopedInstancesMap.get(scopedKey);
+
                 case Singleton:
                     String singletonKey = constructor.getDeclaringClass().getSimpleName();
-                    if (!singletonInstances.containsKey(singletonKey)) {
-                        singletonInstances.put(singletonKey, constructor.newInstance(parameters));
-                    }
+                    if (!singletonInstancesMap.containsKey(singletonKey))
+                        singletonInstancesMap.put(singletonKey, constructor.newInstance(parameters));
 
-                    return singletonInstances.get(singletonKey);
+                    return singletonInstancesMap.get(singletonKey);
             }
 
-            return serviceInstance;
+            return null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
