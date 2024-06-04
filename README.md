@@ -51,7 +51,7 @@ var dependency = (IDependency1)locator.getService(IDependency1.class);
 dependency.printRandomNumbers();
 ```
 
-## Escopo de Serviços: Scoped, Transient e Singleton
+## Ciclos De Vida
 
 Ao configurar serviços em um contêiner de injeção de dependência (DI), é importante entender os diferentes ciclos de vida disponíveis para as dependencias. Os ciclos de vida determinam como as instâncias dos serviços são criadas e gerenciadas. Aqui estão os três mais comuns: Scoped, Transient e Singleton.
 
