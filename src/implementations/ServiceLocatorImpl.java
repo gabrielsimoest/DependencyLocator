@@ -55,8 +55,8 @@ public class ServiceLocatorImpl implements IServiceLocator {
 
         Constructor<?>[] constructors = serviceDescriptor.getServiceClass().getConstructors();
         for (Constructor<?> constructor : constructors) {
-            var parameters = getDependenciesFromParameters(constructor, scopedInstancesMap, optionalObjects);
-            return getInstanceFromConstructorWithLifetime(constructor, serviceDescriptor.getServiceLifetime(), scopedInstancesMap, parameters);
+            var dependenciesFromParameters = getDependenciesFromParameters(constructor, scopedInstancesMap, optionalObjects);
+            return getInstanceFromConstructorWithLifetime(constructor, serviceDescriptor.getServiceLifetime(), scopedInstancesMap, dependenciesFromParameters);
         }
 
         return null;

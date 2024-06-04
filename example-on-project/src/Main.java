@@ -1,12 +1,25 @@
-import dependencyLocator.abstractions.IDependencyInjectionContainer;
-import dependencyLocator.implementations.DependencyInjectionContainer;
-
-import java.awt.*;
+import dependencies.Dependency4;
+import dependencyLocator.abstractions.IServiceLocator;
+import dependencyLocator.implementations.DependencyInjectionContainerImpl;
+import dependencyLocator.implementations.ServiceLocatorImpl;
+import dependencyManager.DependencyInjectionManager;
+import dependencyManager.IDependencyInjectionManager;
 
 public class Main {
-    IDependencyInjectionContainer aa = new DependencyInjectionContainer();
-    
+
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        IDependencyInjectionManager dependencyInjectionManager = new DependencyInjectionManager(new DependencyInjectionContainerImpl());
+        dependencyInjectionManager.AddDependences();
+
+        printRandomNumbersWithANewInstance();
+        printRandomNumbersWithANewInstance();
+        printRandomNumbersWithANewInstance();
+    }
+    
+    private static void printRandomNumbersWithANewInstance() {
+        IServiceLocator locator = ServiceLocatorImpl.getInstance();
+        
+        var dependency4 = (Dependency4)locator.getService(Dependency4.class);
+        dependency4.printRandomNumbers();
     }
 }
