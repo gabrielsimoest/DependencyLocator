@@ -1,6 +1,6 @@
 # Service Locator and Dependency Container Library
 
-Este repositório contém uma biblioteca para implementar um Service Locator e um Dependency Container em Java. A biblioteca facilita a gestão de dependências em sua aplicação, permitindo registrar e resolver serviços de forma centralizada e gerenciar seus ciclos de vida.
+Este repositório contém uma biblioteca que implementa um Service Locator e um Dependency Container em Java. A biblioteca facilita a gestão de dependências em sua aplicação, permitindo registrar e resolver serviços de forma centralizada e gerenciar seus ciclos de vida.
 
 ## Índice
 - [Instalação](#instalação)
@@ -50,6 +50,8 @@ IServiceLocator locator = ServiceLocatorImpl.getInstance();
 var dependency = (IDependency1)locator.getService(IDependency1.class);
 dependency.printRandomNumbers();
 ```
+
+O método getService também permite fornecer dependências adicionais que serão usadas caso não seja possível encontrar a dependência solicitada no Service Locator.
 
 ## Ciclos De Vida
 
