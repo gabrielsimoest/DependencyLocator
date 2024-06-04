@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="dependency-locator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/dependency_locator_jar</output-path>
+    <root id="archive" name="dependency-locator.jar">
+      <element id="module-output" name="DependencyLocator" />
+    </root>
+  </artifact>
+</component>
