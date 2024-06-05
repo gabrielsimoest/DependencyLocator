@@ -47,8 +47,8 @@ Para obter dependências registradas no Service Locator, use o método `getServi
 ```java
 IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
         
-        var dependency4 = (Dependency4)container.getManagedService(Dependency4.class);
-        dependency4.printRandomNumbers();
+var dependency4 = (Dependency4)container.getManagedService(Dependency4.class);
+dependency4.printRandomNumbers();
 ```
 
 O método getService também permite fornecer dependências adicionais que serão usadas caso não seja possível encontrar a dependência solicitada no Service Locator.
