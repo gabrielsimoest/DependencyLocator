@@ -1,4 +1,5 @@
 import dependencies.Dependency4;
+import dependencyLocator.abstractions.IDependencyInjectionContainer;
 import dependencyLocator.abstractions.IServiceLocator;
 import dependencyLocator.implementations.DependencyInjectionContainerImpl;
 import dependencyLocator.implementations.ServiceLocatorImpl;
@@ -17,9 +18,9 @@ public class Main {
     }
     
     private static void printRandomNumbersWithANewInstance() {
-        IServiceLocator locator = ServiceLocatorImpl.getInstance();
+        IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
         
-        var dependency4 = (Dependency4)locator.getService(Dependency4.class);
+        var dependency4 = (Dependency4)container.getManagedService(Dependency4.class);
         dependency4.printRandomNumbers();
     }
 }

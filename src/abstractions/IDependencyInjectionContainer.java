@@ -9,4 +9,6 @@ public interface IDependencyInjectionContainer {
 
     void addSingleton(Class<?> serviceClass);
     void addSingleton(Class<?> serviceInterface, Class<?> serviceClass);
+
+    Object getManagedService(Class<?> serviceClass, Object... optionalParameters);
 }
