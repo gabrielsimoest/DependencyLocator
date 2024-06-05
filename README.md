@@ -40,9 +40,9 @@ ServiceLocator locator = new ServiceLocator();
 container.addScoped(Dependency2.class);
 ```
 
-### Obter Dependências do Container
+### Obter Dependências
 
-Para obter dependências registradas no Service Locator, use o método `getService`.
+Para obter dependências registradas no Container, use o método `getService`.
 
 ```java
 IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
