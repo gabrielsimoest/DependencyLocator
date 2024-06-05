@@ -31,12 +31,12 @@ Para adicionar dependências ao Container, utilize a classe `ServiceDescriptor` 
 
 Usando Interfaces
 ```java
-ServiceLocator locator = new ServiceLocator();
+IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
 container.addTransient(IDependency1.class, Dependency1.class);
 ```
 Ou Usando apenas a classe
 ```java
-ServiceLocator locator = new ServiceLocator();
+IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
 container.addScoped(Dependency2.class);
 ```
 
