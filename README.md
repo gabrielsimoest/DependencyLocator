@@ -27,7 +27,7 @@ Para usar esta biblioteca em seu projeto Java, adicione o jar da biblioteca ao s
 
 ### Adicionar Dependências
 
-Para adicionar dependências ao Service Locator, utilize a classe `ServiceDescriptor` para registrar os serviços. 
+Para adicionar dependências ao Container, utilize a classe `ServiceDescriptor` para registrar os serviços. 
 
 Usando Interfaces
 ```java
@@ -40,15 +40,15 @@ ServiceLocator locator = new ServiceLocator();
 container.addScoped(Dependency2.class);
 ```
 
-### Obter Dependências
+### Obter Dependências do Container
 
 Para obter dependências registradas no Service Locator, use o método `getService`.
 
 ```java
-IServiceLocator locator = ServiceLocatorImpl.getInstance();
-
-var dependency = (IDependency1)locator.getService(IDependency1.class);
-dependency.printRandomNumbers();
+IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
+        
+        var dependency4 = (Dependency4)container.getManagedService(Dependency4.class);
+        dependency4.printRandomNumbers();
 ```
 
 O método getService também permite fornecer dependências adicionais que serão usadas caso não seja possível encontrar a dependência solicitada no Service Locator.
