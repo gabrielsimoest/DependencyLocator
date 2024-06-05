@@ -31,18 +31,18 @@ Para adicionar dependências ao Container, utilize a classe `ServiceDescriptor` 
 
 Usando Interfaces
 ```java
-ServiceLocator locator = new ServiceLocator();
+IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
 container.addTransient(IDependency1.class, Dependency1.class);
 ```
 Ou Usando apenas a classe
 ```java
-ServiceLocator locator = new ServiceLocator();
+IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
 container.addScoped(Dependency2.class);
 ```
 
 ### Obter Dependências do Container
 
-Para obter dependências registradas no Service Locator, use o método `getService`.
+Para obter dependências registradas no Container, use o método `getService`.
 
 ```java
 IDependencyInjectionContainer container = DependencyInjectionContainerImpl.getInstance();
@@ -51,7 +51,7 @@ var dependency4 = (Dependency4)container.getManagedService(Dependency4.class);
 dependency4.printRandomNumbers();
 ```
 
-O método getService também permite fornecer dependências adicionais que serão usadas caso não seja possível encontrar a dependência solicitada no Service Locator.
+O método getManagedService também permite fornecer dependências adicionais que serão usadas caso não seja possível encontrar a dependência solicitada no Container.
 
 ## Ciclos De Vida
 
